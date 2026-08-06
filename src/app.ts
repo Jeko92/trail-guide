@@ -4,7 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import publicRoutes from './routes/public/index.route.ts';
 import { connectDB } from './db/database.ts';
-// import { connectDB } from './db/database';
+import cors from "cors";
 
 const app = express();
 
@@ -36,6 +36,7 @@ app.use('/css', express.static(picoDir));
 app.use('/css', express.static(cssDir));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 app.use(publicRoutes);
 
