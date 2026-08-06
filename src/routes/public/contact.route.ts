@@ -3,6 +3,6 @@ import contactController from '../../controllers/public/contact.controller.ts';
 
 const contact = Router();
 
-contact.get('/contact', contactController)
+contact.get('/contact', contactController);
 
 export default contact;

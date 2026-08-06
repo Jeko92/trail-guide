@@ -3,6 +3,6 @@ import aboutController from '../../controllers/public/about.controller.ts';
 
 const about = Router();
 
-about.get('/about', aboutController)
+about.get('/about', aboutController);
 
 export default about;

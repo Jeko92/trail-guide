@@ -7,11 +7,6 @@ import trail from './trail.route.ts';
 
 const publicRoutes = Router();
 
-publicRoutes
-  .use(home)
-  .use(about)
-  .use(regions)
-  .use(trail)
-  .use(contact);
+publicRoutes.use(home).use(about).use(regions).use(trail).use(contact);
 
 export default publicRoutes;
