@@ -1,8 +1,28 @@
 {% extends "layouts/_base.njk" %}
 
+{% block hero %}
+  <header class='hero-home'>
+    <hgroup>
+      <h1>Trail Guide</h1>
+      <p>Discover scenic hiking trails across Europe.</p>
+    </hgroup>
+
+    <p>
+      Trail Guide is a small demonstration project built with
+      Express, Nunjucks and SQLite. Browse hiking destinations,
+      explore regions and discover trails for every experience level.
+    </p>
+
+    <a href="/regions" role="button">
+      Browse Regions
+    </a>
+  </header>
+{% endblock %}
+
 {% block main_content %}
-
-  <main>
-  </main>
-
-{% endblock main_content %}
+  <hr>
+  <h2>Main Section</h2>
+  <section class='trails'>
+    <h2>Available Trails</h2>
+  </section>
+{% endblock %}
