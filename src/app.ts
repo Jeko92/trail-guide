@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import publicRoutes from './routes/public/index.route.ts';
 import { connectDB } from './db/database.ts';
 import cors from "cors";
+import { logger } from './middleware/logger-middleware.ts';
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/css', express.static(cssDir));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(logger);
 
 app.use(publicRoutes);
 
