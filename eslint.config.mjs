@@ -1,12 +1,20 @@
 import js from '@eslint/js';
-import ts from 'typescript-eslint';
+import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
-export const baseConfig = [
-  js.configs.recommended,
-  ...ts.configs.recommended,
-  prettier,
+export default [
   {
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '.cache/**'],
+  },
+
+  js.configs.recommended,
+
+  ...tseslint.configs.recommended,
+
+  prettier,
+
+  {
+    files: ['src/**/*.ts'],
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -21,5 +29,3 @@ export const baseConfig = [
     },
   },
 ];
-
-export default baseConfig;

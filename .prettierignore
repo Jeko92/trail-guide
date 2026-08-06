@@ -1,8 +1,10 @@
 node_modules
+dist
 coverage
 .cache
+
 bun.lockb
-pnpm-lock.yaml
 package-lock.json
+pnpm-lock.yaml
+
 **/.db/**
-*.md

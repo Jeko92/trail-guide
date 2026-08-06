@@ -23,7 +23,7 @@
       "description": "Routine repository maintenance, tooling updates, or dependency bumps"
     },
     "build": {
-      "description": "Changes affecting Turborepo pipelines, pnpm workspaces, or compilers"
+      "description": "Changes affecting repo pipelines, pnpm workspaces, or compilers"
     },
     "ci": {
       "description": "Changes to GitHub Actions workflows or PR validation scripts"
