@@ -1,12 +1,11 @@
 import { Router } from 'express';
-import adminController from '../../controllers/admin/admin.controller.ts';
+import { adminController, createTrail, getNewTrailForm } from '../../controllers/admin/admin.controller.ts';
 
 const adminRoute = Router();
 
 adminRoute.get('/', adminController);
 
-adminRoute.get('/trails/new', (_req,res)=>{
-  res.render('admin/form.njk', {title: 'Trail Guide - Create new trail'})
-});
+adminRoute.get('/trails/new', getNewTrailForm);
+adminRoute.post('/trails', createTrail);
 
 export default adminRoute;
