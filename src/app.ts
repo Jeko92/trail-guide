@@ -3,7 +3,7 @@ import nunjucks from 'nunjucks';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import publicRoutes from './routes/public/index.route.ts';
-import { connectDB } from './db/database.ts';
+import { closeDB, connectDB } from './db/database.ts';
 import cors from 'cors';
 import { logger } from './middleware/logger-middleware.ts';
 
@@ -24,6 +24,7 @@ const picoDir = path.join(
   'css',
 );
 
+// --- App Configuration ---
 app.set('views', viewsDir);
 app.set('view engine', 'njk');
 
@@ -35,6 +36,7 @@ const env = nunjucks.configure(viewsDir, {
 
 env.addGlobal('currentYear', () => new Date().getFullYear());
 
+// --- Middleware & Routes ---
 app.use('/assets', express.static(assetsDir));
 app.use('/css', express.static(picoDir));
 app.use('/css', express.static(cssDir));
@@ -47,11 +49,35 @@ app.use(publicRoutes);
 
 const port = Number(process.env['PORT']) || 3000;
 
-async function init() {
+// --- Application Lifecycle ---
+async function main() {
   await connectDB();
-  app.listen(port, () => {
+
+  const server = app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
   });
+
+  const shutdown = async (signal: string) => {
+    console.log(`\nReceived ${signal}. Shutting down gracefully...`);
+
+    // Stop receiving new HTTP requests
+    server.close(async () => {
+      try {
+        await closeDB();
+        console.log('Database connection closed.');
+        process.exit(0);
+      } catch (err) {
+        console.error('Error during shutdown:', err);
+        process.exit(1);
+      }
+    });
+  };
+
+  process.on('SIGINT', () => void shutdown('SIGINT'));
+  process.on('SIGTERM', () => void shutdown('SIGTERM'));
 }
 
-init();
+main().catch((err: unknown) => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
+});

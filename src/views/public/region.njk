@@ -1,6 +1,44 @@
 {% extends "layouts/_base.njk" %}
+{% from "macros/trail-card.njk" import trailCard %}
 
-{% block content %}
+{% block main_content %}
   <h1>Region single view</h1>
+  <header>
+    <h1>{{ region.name }}</h1>
+    <p>{{ region.country }}</p>
+    <p>{{ region.description }}</p>
+  </header>
+
+  <section>
+    <h2>Trails</h2>
+    {% if trails.length %}
+      {% for trail in trails %}
+        {{ trailCard(trail) }}
+      {% endfor %}
+    {% else %}
+
+      <article>
+        <p>No trails available for this region.</p>
+      </article>
+
+    {% endif %}
+  </section>
+  <nav aria-label="Region navigation">
+    <ul class='region-navigation'>
+      <li>
+        {% if prevRegion %}
+          <a role="button" href="/regions/{{ prevRegion.slug }}">← {{
+            prevRegion.name }}</a>
+        {% endif %}
+      </li>
+      <li>
+        {% if nextRegion %}
+          <a role="button" href="/regions/{{ nextRegion.slug }}">{{ nextRegion
+            .name }}
+            →</a>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
 
 {% endblock %}

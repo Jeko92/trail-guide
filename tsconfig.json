@@ -5,13 +5,8 @@
     "target": "ES2023",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "types": [
-      "node"
-    ],
-    "lib": [
-      "ES2023",
-      "DOM"
-    ],
+    "types": ["node"],
+    "lib": ["ES2023", "DOM"],
     "strict": true,
     "allowJs": true,
     "resolveJsonModule": true,
