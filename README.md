@@ -131,17 +131,17 @@ API_KEY=your-secret-key
 
 ## Available Scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Start development server with Bun watch mode |
-| `npm run build` | Build production bundle |
-| `npm run start` | Run production build |
-| `npm run db:seed` | Seed SQLite database |
-| `npm run typecheck` | Run TypeScript checks |
-| `npm run lint` | Run ESLint |
-| `npm run lint:fix` | Fix ESLint issues automatically |
-| `npm run format:check` | Check formatting with Prettier |
-| `npm run format:write` | Format files with Prettier |
+| Command                | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| `npm run dev`          | Start development server with Bun watch mode |
+| `npm run build`        | Build production bundle                      |
+| `npm run start`        | Run production build                         |
+| `npm run db:seed`      | Seed SQLite database                         |
+| `npm run typecheck`    | Run TypeScript checks                        |
+| `npm run lint`         | Run ESLint                                   |
+| `npm run lint:fix`     | Fix ESLint issues automatically              |
+| `npm run format:check` | Check formatting with Prettier               |
+| `npm run format:write` | Format files with Prettier                   |
 
 ## Development
 

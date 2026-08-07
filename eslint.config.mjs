@@ -26,6 +26,8 @@ export default [
         { argsIgnorePattern: '^_' },
       ],
       'no-console': 'off',
+      'sql/format': ['error', { spaces: 2 }],
+      'sql/no-unsafe-query': 'warn'
     },
   },
 ];
