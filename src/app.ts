@@ -8,6 +8,7 @@ import cors from 'cors';
 import { logger } from './middleware/logger-middleware.ts';
 import { errorHandler } from './middleware/error-middleware.ts';
 import adminRoutes from './routes/admin/index.route.ts';
+import apiRoutes from './routes/api/index.route.ts';
 
 const app = express();
 
@@ -44,10 +45,11 @@ app.use('/css', express.static(picoDir));
 app.use('/css', express.static(cssDir));
 app.use(express.static(path.join(projectRoot, 'public')));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cors());
 app.use(logger);
 
-app.use(publicRoutes).use(adminRoutes);
+app.use(publicRoutes).use(adminRoutes).use(apiRoutes);
 
 app.use((_req: Request, res: Response) => {
   res.status(404);
