@@ -1,7 +1,8 @@
-import { Router, type Request, type Response } from 'express';
+import { Router } from 'express';
+import adminController from '../../controllers/admin/admin.controller.ts';
 
 const adminRoutes = Router();
 
-adminRoutes.get('/admin', (_req:Request, res:Response) => res.send('Admin OK'));
+adminRoutes.get('/admin', adminController);
 
 export default adminRoutes;
