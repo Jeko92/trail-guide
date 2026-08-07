@@ -23,7 +23,7 @@ const trailController = async (
 
     res.render('public/trail.njk', {
       title: `Trail Guide - ${trail.title}`,
-      trailWithTimestamp
+      trail: trailWithTimestamp
     });
   } catch (err) {
     next(err);

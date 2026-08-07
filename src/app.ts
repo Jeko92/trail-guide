@@ -7,7 +7,7 @@ import { closeDB, connectDB } from './db/database.ts';
 import cors from 'cors';
 import { logger } from './middleware/logger-middleware.ts';
 import { errorHandler } from './middleware/error-middleware.ts';
-import adminRoutes from './routes/admin/admin.route.ts';
+import adminRoutes from './routes/admin/index.route.ts';
 
 const app = express();
 
