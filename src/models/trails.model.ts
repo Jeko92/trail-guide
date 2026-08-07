@@ -1,7 +1,7 @@
-import type { Trail, TrailWithRegion } from '../types/types.ts';
+import type { Difficulty, Trail, TrailWithRegion } from '../types/types.ts';
 import { getDB } from '../db/database.ts';
 import type { Database } from 'sqlite';
-import { slugify } from '../utils/utils.ts';
+import { sanitizePostContent, slugify } from '../utils/utils.ts';
 
 export async function getAllTrails (): Promise<TrailWithRegion[]> {
   const db: Database = getDB();
@@ -52,32 +52,36 @@ export async function getTrailsByRegionId (
 // Admin handlers
 export async function getTrailById(): Promise<void> {}
 
-export async function addTrail ( title: string ):Promise<void>{
-  const db:Database = getDB();
+export async function addTrail (
+  regionId: number,
+  title: string,
+  difficulty: Difficulty,
+  distance: number,
+  description: string,
+  image_url: string
+): Promise<void> {
+  const db: Database = getDB();
   const slug = slugify(title);
 
   const trailExists = await db.get<Trail>('SELECT * FROM trails WHERE slug = ?', slug);
-  if(trailExists){
+  if ( trailExists ) {
     throw new Error(`Trail with slug ${slug} already exists`);
   }
 
-  // TODO(3.6): region_id, difficulty, and distance_km are hardcoded —
-  // description/image_url are left out entirely since they're nullable —
-  // until those form fields are uncommented and wired through.
-  // See IMPLEMENTATION_PLAN.md 3.5 step 7.
+  // sanitized here, not in the controller, since this fn is also the intended write path for the future API
+  const sanitizedDescription = sanitizePostContent(description);
   const createdAt = Math.floor(Date.now() / 1000);
-  const regionId = 1;
-  const difficulty = 'easy';
-  const distanceKm = 0;
 
   await db.run(
-    `INSERT INTO trails (title, slug, region_id, difficulty, distance_km, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
-    title, slug, regionId, difficulty, distanceKm, createdAt
+    `INSERT INTO trails (title, slug, region_id, difficulty, distance_km, description, image_url, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    title, slug, regionId, difficulty, distance, sanitizedDescription, image_url, createdAt
   );
-
-  console.log(`Trail with title: ${title} and slug:${slug} successfully created!`);
 }
-export async function updateTrail(): Promise<void> {}
 
-export async function deleteTrail(): Promise<void> {}
+export async function updateTrail (): Promise<void> {
+}
+
+export async function deleteTrail (): Promise<void> {
+}
 
