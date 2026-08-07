@@ -1,7 +1,14 @@
 import type { Request, Response } from 'express';
-import { addTrail, getAllTrails, getTrailById, updateTrail } from '../../models/trails.model.ts';
+import {
+  addTrail,
+  deleteTrail,
+  getAllTrails,
+  getTrailById,
+  getTrailsByRegionId,
+  updateTrail
+} from '../../models/trails.model.ts';
 import { formatDate, sanitizePostContent } from '../../utils/utils.ts';
-import { addRegion, getAllRegions } from '../../models/regions.model.ts';
+import { addRegion, deleteRegion, getAllRegions } from '../../models/regions.model.ts';
 import type { Difficulty } from '../../types/types.ts';
 
 // Shared by createTrail and updateTrailController: resolves req.body down to
@@ -97,7 +104,7 @@ export const getEditTrailForm = async ( req: Request<{ id: string }>, res: Respo
   res.render('admin/form.njk', { title: 'Trail Guide - Edit trail', trail, regions });
 };
 
-export const createTrail = async ( req: Request, res: Response ) => {
+export const createTrailController = async ( req: Request, res: Response ) => {
   const prepared = await prepareTrailData(req.body);
   if ( 'error' in prepared ) {
     res.status(400).send(prepared.error);
@@ -155,4 +162,31 @@ export async function updateTrailController ( req: Request<{ id: string }>, res:
   }
 }
 
-export async function deleteTrailController ( _req: Request, _res: Response ): Promise<void> {}
+export async function deleteTrailController ( req: Request<{ id: string }>, res: Response ): Promise<void> {
+  const id = req.params.id;
+
+  if ( !Number.isInteger(Number(id)) ) {
+    res.status(400).send('Invalid id');
+    return;
+  }
+
+  const trail = await getTrailById(id);
+  if ( !trail ) {
+    res.status(404).render('public/404.njk', { title: 'Trail not found' });
+    return;
+  }
+
+  try {
+    await deleteTrail(id);
+
+    // If that was the last trail in this region, the region must also be deleted.
+    const remainingTrailsInRegion = await getTrailsByRegionId(trail.region_id);
+    if ( remainingTrailsInRegion.length === 0 ) {
+      await deleteRegion(trail.region_id);
+    }
+  } catch ( err ) {
+    console.error(`Failed to delete trail with id "${id}":`, err);
+  }
+
+  res.redirect('/admin');
+}

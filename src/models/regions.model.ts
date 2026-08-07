@@ -32,3 +32,8 @@ export async function addRegion ( name: string, country: string, description: st
 
   return 0;
 }
+
+export async function deleteRegion ( id: number ): Promise<void> {
+  const db: Database = getDB();
+  await db.run('DELETE FROM regions WHERE id = ?', id);
+}

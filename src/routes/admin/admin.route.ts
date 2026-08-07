@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   adminController,
-  createTrail,
+  createTrailController, deleteTrailController,
   getEditTrailForm,
   getNewTrailForm,
   updateTrailController
@@ -12,8 +12,9 @@ const adminRoute = Router();
 adminRoute.get('/', adminController);
 
 adminRoute.get('/trails/new', getNewTrailForm);
-adminRoute.post('/trails', createTrail);
+adminRoute.post('/trails', createTrailController);
 adminRoute.get('/trails/:id/edit', getEditTrailForm);
 adminRoute.post('/trails/:id', updateTrailController);
+adminRoute.post('/trails/:id/delete', deleteTrailController);
 
 export default adminRoute;

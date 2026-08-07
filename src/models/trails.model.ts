@@ -110,6 +110,11 @@ export async function updateTrail ( id: string, changes: Partial<Trail> ): Promi
   );
 }
 
-export async function deleteTrail (): Promise<void> {
-}
+export async function deleteTrail (id:string): Promise<void> {
+  const db = getDB();
+  const result = await db.run('DELETE FROM trails WHERE id = ?', id);
 
+  if ( !result.changes ) {
+    throw new Error(`trail with id "${id}" not found`);
+  }
+}
