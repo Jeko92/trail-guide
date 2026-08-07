@@ -51,7 +51,7 @@ export async function getTrailsByRegionId(
 }
 
 // Admin handlers
-export async function getTrailId(): Promise<void> {}
+export async function getTrailById(): Promise<void> {}
 
 export async function addTrail(): Promise<void> {}
 
