@@ -2,51 +2,36 @@
 
 {% block main_content %}
   <h1>Trail test</h1>
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
-    autem beatae, commodi dignissimos dolorum earum explicabo impedit magnam
-    maxime minus quisquam veniam. Impedit iure laboriosam perspiciatis quam
-    quisquam reiciendis, rerum.
-  </p>
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
-    autem beatae, commodi dignissimos dolorum earum explicabo impedit magnam
-    maxime minus quisquam veniam. Impedit iure laboriosam perspiciatis quam
-    quisquam reiciendis, rerum.
-  </p>
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium
-    autem beatae, commodi dignissimos dolorum earum explicabo impedit magnam
-    maxime minus quisquam veniam. Impedit iure laboriosam perspiciatis quam
-    quisquam reiciendis, rerum.
-  </p>
-    <article>
-      <header>
-        <h1>{{ trail.title }}</h1>
-        <p>
-          <strong>{{ trail.region_name }}</strong>
-          •
-          {{ trail.region_country }}
-        </p>
-        <p>
-          Difficulty:
-          <strong>{{ trail.difficulty }}</strong>
-        </p>
-        <p>
-          Distance:
-          <strong>{{ trail.distance_km }} km</strong>
-        </p>
-      </header>
-      {% if trail.image_url %}
-        <img
-          src="{{ trail.image_url }}"
-          alt="{{ trail.title }}"
-        >
-      {% endif %}
-      {{ trail.description | safe }}
-      <footer>
-        <p>
-          Published:
-          {{ trail.createdAt }}
-        </p>
-      </footer>
-    </article>
+  <article>
+    <header>
+      <h1>{{ trail.title }}</h1>
+      <p>
+        <strong>{{ trail.region_name }}</strong>
+        •
+        {{ trail.region_country }}
+      </p>
+      <p>
+        Difficulty:
+        <strong>{{ trail.difficulty }}</strong>
+      </p>
+      <p>
+        Distance:
+        <strong>{{ trail.distance_km }} km</strong>
+      </p>
+    </header>
+    {% if trail.image_url %}
+      <img
+        src="{{ trail.image_url }}"
+        alt="{{ trail.title }}"
+      >
+    {% endif %}
+    {{ trail.description | safe }}
+    <footer>
+      <p>
+        Published:
+        {{ trail.createdAt }}
+      </p>
+    </footer>
+  </article>
 
 {% endblock %}
