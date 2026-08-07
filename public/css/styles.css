@@ -16,6 +16,18 @@ main {
   border-radius: 50%;
 }
 
+.region-navigation {
+  inline-size:100%
+}
+
+.region-navigation li {
+  flex: 0 0 auto;
+}
+
+.region-navigation li:last-child {
+  margin-left: auto;
+}
+
 .footer-wrapper {
   display: flex;
   flex-direction: column;
