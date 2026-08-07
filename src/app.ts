@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { type Request, type Response } from 'express';
 import nunjucks from 'nunjucks';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -6,6 +6,7 @@ import publicRoutes from './routes/public/index.route.ts';
 import { closeDB, connectDB } from './db/database.ts';
 import cors from 'cors';
 import { logger } from './middleware/logger-middleware.ts';
+import { errorHandler } from './middleware/error-middleware.ts';
 
 const app = express();
 
@@ -46,6 +47,18 @@ app.use(cors());
 app.use(logger);
 
 app.use(publicRoutes);
+
+app.use((_req: Request, res: Response) => {
+  res.status(404);
+  try {
+    res.render('public/404.njk', { title: 'Not found' });
+  } catch (err) {
+    console.error('Error rendering 404 page:', err);
+    res.status(500).render('public/500.njk', {title: "Internal Server Error"});
+  }
+})
+
+app.use(errorHandler);
 
 const port = Number(process.env['PORT']) || 3000;
 
