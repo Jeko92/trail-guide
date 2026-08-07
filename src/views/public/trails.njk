@@ -1,0 +1,28 @@
+{% extends "layouts/_base.njk" %}
+{% from "macros/trail-card.njk" import trailCard %}
+
+  <header class='hero-home'>
+    <hgroup>
+      <h1>Trails List</h1>
+    </hgroup>
+  </header>
+
+{% block main_content %}
+  <hr>
+  <h2>Main Section</h2>
+  <section class='grid'>
+    {% if trails.length %}
+
+      {% for trail in trails %}
+        {{ trailCard(trail) }}
+      {% endfor %}
+
+    {% else %}
+
+      <article>
+        <p>No trails available yet.</p>
+      </article>
+
+    {% endif %}
+  </section>
+{% endblock %}
