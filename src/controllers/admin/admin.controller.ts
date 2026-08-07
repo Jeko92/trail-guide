@@ -1,7 +1,69 @@
 import type { Request, Response } from 'express';
-import { addTrail, getAllTrails, getTrailById } from '../../models/trails.model.ts';
+import { addTrail, getAllTrails, getTrailById, updateTrail } from '../../models/trails.model.ts';
 import { formatDate, sanitizePostContent } from '../../utils/utils.ts';
 import { addRegion, getAllRegions } from '../../models/regions.model.ts';
+import type { Difficulty } from '../../types/types.ts';
+
+// Shared by createTrail and updateTrailController: resolves req.body down to
+// a single region id, either the one picked from the <select>, or a brand-new
+// region created on the fly if the "add a new region instead" fields
+// were filled in. Returns null if neither path produced a usable id.
+async function resolveRegionId ( body: Request['body'] ): Promise<number | null> {
+  const { region_id, new_region_name, new_region_country, new_region_description } = body;
+
+  if ( new_region_name && new_region_name !== '' ) {
+    return addRegion(new_region_name, new_region_country, new_region_description);
+  }
+
+  const regionId = Number(region_id);
+  return regionId || null;
+}
+
+interface ValidatedTrailFields {
+  title: string;
+  difficulty: Difficulty;
+  distanceKm: number;
+  description: string;
+  image_url: string;
+}
+
+// Shared by createTrail and updateTrailController
+function validateTrailFields ( body: Request['body'] ): { data: ValidatedTrailFields } | { error: string } {
+  const { title, difficulty, distance, description, image_url } = body;
+
+  if ( !title ) {
+    return { error: 'Title is required' };
+  }
+
+  const validDifficulties: Difficulty[] = [ 'easy', 'moderate', 'hard' ];
+  if ( !validDifficulties.includes(difficulty) ) {
+    return { error: 'Choose trail difficulty' };
+  }
+
+  const distanceKm = Number(distance);
+  if ( !distance || Number.isNaN(distanceKm) || distanceKm < 0 ) {
+    return { error: 'Please provide distance value >= 0' };
+  }
+
+  return { data: { title, difficulty, distanceKm, description, image_url } };
+}
+
+// Shared by createTrail and updateTrailController
+async function prepareTrailData (
+  body: Request['body'],
+): Promise<{ data: ValidatedTrailFields & { regionId: number } } | { error: string }> {
+  const validated = validateTrailFields(body);
+  if ( 'error' in validated ) {
+    return validated;
+  }
+
+  const regionId = await resolveRegionId(body);
+  if ( !regionId ) {
+    return { error: 'Choose a region or provide a new one' };
+  }
+
+  return { data: { ...validated.data, regionId } };
+}
 
 export const adminController = async ( _req: Request, res: Response ) => {
   const trails = await getAllTrails();
@@ -36,66 +98,61 @@ export const getEditTrailForm = async ( req: Request<{ id: string }>, res: Respo
 };
 
 export const createTrail = async ( req: Request, res: Response ) => {
-  const {
-    region_id,
-    new_region_name,
-    new_region_country,
-    new_region_description,
-    title,
-    difficulty,
-    distance,
-    description,
-    image_url
-  } = req.body;
-
-  if ( !title ) {
-    res.status(400).send('Title is required');
+  const prepared = await prepareTrailData(req.body);
+  if ( 'error' in prepared ) {
+    res.status(400).send(prepared.error);
     return;
   }
+  const { title, difficulty, distanceKm, description, image_url, regionId } = prepared.data;
 
-  if(!['easy', 'moderate', 'hard'].includes(difficulty)){
-    res.status(400).send('Choose trail difficulty');
-    return;
-  }
-
-  const distanceKm = Number(distance);
-  if(!distance || Number.isNaN(distanceKm) || distanceKm < 0 ) {
-    res.status(400).send('Please provide distance value >= 0');
-    return;
-  }
-
-  let regionId;
-
-  if ( new_region_name && new_region_name !== '' ) {
-    regionId = await addRegion(new_region_name, new_region_country, new_region_description);
-  } else {
-    regionId = Number(region_id);
-  }
-
-  if (!regionId) {
-    res.status(400).send('Choose a region or provide a new one');
-    return;
-  }
-
-  const newTrail = {
-    region_id,
-    new_region_name,
-    new_region_country,
-    new_region_description,
-    title,
-    difficulty,
-    distance,
-    description,
-    image_url
-  };
   try {
     await addTrail(regionId, title, difficulty, distanceKm, description, image_url);
     res.status(201).redirect('/admin');
   } catch ( err ) {
     res.status(400).render('admin/form.njk', {
       error: (err as Error).message,
-      trail: newTrail,
+      trail: req.body,
     });
   }
 };
 
+export async function updateTrailController ( req: Request<{ id: string }>, res: Response ): Promise<void> {
+  const id = req.params.id;
+
+  if ( !Number.isInteger(Number(id)) ) {
+    res.status(400).send('Invalid id');
+    return;
+  }
+
+  const existingTrail = await getTrailById(id);
+  if ( !existingTrail ) {
+    res.status(404).render('public/404.njk', { title: 'Trail not found' });
+    return;
+  }
+
+  const prepared = await prepareTrailData(req.body);
+  if ( 'error' in prepared ) {
+    res.status(400).send(prepared.error);
+    return;
+  }
+  const { title, difficulty, distanceKm, description, image_url, regionId } = prepared.data;
+
+  try {
+    await updateTrail(id, {
+      region_id: regionId,
+      title,
+      difficulty,
+      distance_km: distanceKm,
+      description: sanitizePostContent(description),
+      image_url,
+    });
+    res.redirect('/admin');
+  } catch ( err ) {
+    res.status(400).render('admin/form.njk', {
+      error: (err as Error).message,
+      trail: { ...req.body, id: existingTrail.id },
+    });
+  }
+}
+
+export async function deleteTrailController ( _req: Request, _res: Response ): Promise<void> {}

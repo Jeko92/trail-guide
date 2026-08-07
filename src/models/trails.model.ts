@@ -50,7 +50,7 @@ export async function getTrailsByRegionId (
 }
 
 // Admin handlers
-export async function getTrailById (id: string): Promise<Trail | undefined> {
+export async function getTrailById ( id: string ): Promise<Trail | undefined> {
   const db: Database = getDB();
   return db.get<Trail>(`SELECT * FROM trails WHERE id = ?`, id);
 }
@@ -82,7 +82,32 @@ export async function addTrail (
   );
 }
 
-export async function updateTrail (): Promise<void> {
+export async function updateTrail ( id: string, changes: Partial<Trail> ): Promise<void> {
+  const db = getDB();
+  const existing = await getTrailById(id);
+
+  if ( !existing ) {
+    throw new Error(`Trail with id "${id}" not found`);
+  }
+
+  const updated = { ...existing, ...changes };
+  // created_at is deliberately never part of an update — it's the trail's
+  // original creation time, not something an edit should be able to touch.
+  const newSlug = changes.title ? slugify(changes.title) : existing.slug;
+
+  await db.run(
+    `UPDATE trails
+     SET region_id   = ?,
+         title       = ?,
+         slug        = ?,
+         difficulty  = ?,
+         distance_km = ?,
+         description = ?,
+         image_url   = ?
+     WHERE id = ?`,
+    updated.region_id, updated.title, newSlug, updated.difficulty,
+    updated.distance_km, updated.description, updated.image_url, existing.id
+  );
 }
 
 export async function deleteTrail (): Promise<void> {
