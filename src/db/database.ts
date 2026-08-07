@@ -14,6 +14,7 @@ let db: Database | null = null;
 export async function connectDB() {
   const dbPath = requireEnv('DB_PATH');
   db = await open({ filename: dbPath, driver: sqlite3.Database });
+  await db.run('PRAGMA foreign_keys = ON;');
 
   const testRegion: unknown = await db.all('SELECT * FROM regions LIMIT 1');
   const testTrail: unknown = await db.all('SELECT * FROM trails LIMIT 1');
