@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { addTrail, getAllTrails } from '../../models/trails.model.ts';
+import { addTrail, getAllTrails, getTrailById } from '../../models/trails.model.ts';
 import { formatDate, sanitizePostContent } from '../../utils/utils.ts';
 import { addRegion, getAllRegions } from '../../models/regions.model.ts';
 
@@ -21,6 +21,18 @@ export const adminController = async ( _req: Request, res: Response ) => {
 export const getNewTrailForm = async ( _req: Request, res: Response ) => {
   const regions = await getAllRegions();
   res.render('admin/form.njk', { title: 'Trail Guide - Create new trail', regions });
+};
+
+export const getEditTrailForm = async ( req: Request<{ id: string }>, res: Response ) => {
+  const trail = await getTrailById(req.params.id);
+
+  if ( !trail ) {
+    res.status(404).render('public/404.njk', { title: 'Trail not found' });
+    return;
+  }
+
+  const regions = await getAllRegions();
+  res.render('admin/form.njk', { title: 'Trail Guide - Edit trail', trail, regions });
 };
 
 export const createTrail = async ( req: Request, res: Response ) => {

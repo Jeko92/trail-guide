@@ -50,7 +50,10 @@ export async function getTrailsByRegionId (
 }
 
 // Admin handlers
-export async function getTrailById(): Promise<void> {}
+export async function getTrailById (id: string): Promise<Trail | undefined> {
+  const db: Database = getDB();
+  return db.get<Trail>(`SELECT * FROM trails WHERE id = ?`, id);
+}
 
 export async function addTrail (
   regionId: number,
