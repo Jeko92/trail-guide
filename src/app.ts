@@ -7,6 +7,7 @@ import { closeDB, connectDB } from './db/database.ts';
 import cors from 'cors';
 import { logger } from './middleware/logger-middleware.ts';
 import { errorHandler } from './middleware/error-middleware.ts';
+import adminRoutes from './routes/admin/admin.route.ts';
 
 const app = express();
 
@@ -46,7 +47,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(logger);
 
-app.use(publicRoutes);
+app.use(publicRoutes).use(adminRoutes);
 
 app.use((_req: Request, res: Response) => {
   res.status(404);
