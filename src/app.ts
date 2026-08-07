@@ -41,7 +41,7 @@ env.addGlobal('currentYear', () => new Date().getFullYear());
 app.use('/assets', express.static(assetsDir));
 app.use('/css', express.static(picoDir));
 app.use('/css', express.static(cssDir));
-app.use(express.static('public'));
+app.use(express.static(path.join(projectRoot, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(logger);
