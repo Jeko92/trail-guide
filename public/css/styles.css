@@ -94,3 +94,12 @@ main .grid > article p:first-of-type {
 main .grid > article > footer {
   margin-left: 0;
 }
+
+.admin-list-img img {
+  width: 100%;
+  min-width:200px;
+  max-width: 300px;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  display: block;
+}

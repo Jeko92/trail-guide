@@ -3,11 +3,45 @@
 {% block main_content %}
 
   {% if trails %}
-    <ul>
+
+    <table class="striped">
+      <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Difficulty</th>
+        <th scope="col">Distance</th>
+        <th scope="col">Description</th>
+        <th scope="col">Image</th>
+        <th scope="col">Created At</th>
+        <th scope="col">Action</th>
+      </tr>
+      </thead>
+
+      <tbody>
       {% for trail in trails %}
-        <li>{{ trail.title }}</li>
+        <tr>
+          <td>{{ trail.title }}</td>
+          <td>{{ trail.difficulty }}</td>
+          <td>{{ trail.distance_km }}</td>
+          <td>
+            <small>
+            {{ trail.description | safe }}
+            </small>
+          </td>
+          <td class='admin-list-img'>
+            <img src='{{ trail.image_url }}' alt='{{ trail.title }}'></td>
+          <td>{{ trail.createdAt }}</td>
+          <td>
+            <div>
+              <a class="contrast" role="button" href=''>Edit</a>
+              <br>
+              <a class="danger" role="button" href=''>Delete</a>
+            </div>
+          </td>
+        </tr>
       {% endfor %}
-    </ul>
+      </tbody>
+    </table>
   {% else %}
     <h1>No trails found</h1>
   {% endif %}

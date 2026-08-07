@@ -11,6 +11,7 @@ export async function getAllTrails(): Promise<TrailWithRegion[]> {
       regions.country AS region_country
     FROM trails
     INNER JOIN regions ON trails.region_id = regions.id
+    ORDER BY trails.created_at DESC;
   `);
 }
 
