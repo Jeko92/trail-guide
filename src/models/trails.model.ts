@@ -58,7 +58,3 @@ export async function addTrail(): Promise<void> {}
 export async function updateTrail(): Promise<void> {}
 
 export async function deleteTrail(): Promise<void> {}
-
-export interface TrailViewModel extends TrailWithRegion {
-  createdAt: string;
-}

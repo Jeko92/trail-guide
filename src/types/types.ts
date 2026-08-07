@@ -24,3 +24,7 @@ export interface TrailWithRegion extends Trail {
   region_name: string;
   region_country: string;
 }
+
+export interface TrailViewModel extends TrailWithRegion {
+  createdAt: string;
+}
