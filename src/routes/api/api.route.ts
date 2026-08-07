@@ -1,12 +1,12 @@
-import { Router, type Request, type Response } from 'express';
+import { Router } from 'express';
+import { getTrailsController, getTrailBySlugController } from '../../controllers/api/api.trail.controller.ts';
+import { getRegionsController, getTrailsByRegionIdController } from '../../controllers/api/api.region.controller.ts';
+
 const apiRoute = Router();
 
-apiRoute.get('/trails', (_req:Request, res:Response) => res.json([]));
-
-// apiRoute.get('/trails/new', getNewTrailForm);
-// apiRoute.post('/trails', createTrailController);
-// apiRoute.get('/trails/:id/edit', getEditTrailForm);
-// apiRoute.post('/trails/:id', updateTrailController);
-// apiRoute.post('/trails/:id/delete', deleteTrailController);
+apiRoute.get('/trails', getTrailsController);
+apiRoute.get('/trails/:slug', getTrailBySlugController);
+apiRoute.get('/regions', getRegionsController);
+apiRoute.get('/regions/:slug/trails', getTrailsByRegionIdController);
 
 export default apiRoute;
