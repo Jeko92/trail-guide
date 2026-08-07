@@ -45,6 +45,7 @@
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-sql": "^3.4.1",
     "prettier": "^3.9.6",
     "prettier-plugin-jinja-template": "^2.2.0",
     "tsx": "^4.23.9",
@@ -54,6 +55,7 @@
   "allowScripts": {
     "esbuild@0.28.1": true,
     "sqlite3@6.0.1": true,
-    "fsevents@2.3.3": true
+    "fsevents@2.3.3": true,
+    "multiline-ts@4.0.1": true
   }
 }

@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
+import sql from 'eslint-plugin-sql';
 
 export default [
   {
@@ -15,6 +16,9 @@ export default [
 
   {
     files: ['src/**/*.ts'],
+    plugins: {
+      sql,
+    },
     languageOptions: {
       parserOptions: {
         projectService: true,
@@ -26,6 +30,13 @@ export default [
         { argsIgnorePattern: '^_' },
       ],
       'no-console': 'off',
+      'sql/format': [
+        'error',
+        {},
+        {
+          tabWidth: 2,
+        },
+      ],
     },
   },
 ];
