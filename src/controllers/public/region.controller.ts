@@ -22,7 +22,9 @@ const regionController = async (
     const currentIndex = allRegions.findIndex((r) => r.slug === slug);
     const prevRegion = currentIndex > 0 ? allRegions[currentIndex - 1] : null;
     const nextRegion =
-      currentIndex < allRegions.length - 1 ? allRegions[currentIndex + 1] : null;
+      currentIndex < allRegions.length - 1
+        ? allRegions[currentIndex + 1]
+        : null;
 
     res.render('public/region.njk', {
       title: `Trail Guide - ${region.name}`,

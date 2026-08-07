@@ -12,7 +12,10 @@ const trailsController = async (
       res.status(404).render('public/404.njk', { title: 'Trail not found' });
       return;
     }
-    res.render('public/trails.njk', { title: `Trail Guide - All Trails`, trails });
+    res.render('public/trails.njk', {
+      title: `Trail Guide - All Trails`,
+      trails,
+    });
   } catch (err) {
     next(err);
   }

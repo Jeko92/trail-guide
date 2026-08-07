@@ -14,9 +14,12 @@ export async function getAllTrails(): Promise<TrailWithRegion[]> {
   `);
 }
 
-export async function getTrailBySlug(slug: string): Promise<TrailWithRegion | undefined> {
+export async function getTrailBySlug(
+  slug: string,
+): Promise<TrailWithRegion | undefined> {
   const db: Database = getDB();
-  return db.get<TrailWithRegion>(`
+  return db.get<TrailWithRegion>(
+    `
     SELECT
       trails.*,
       regions.name AS region_name,
@@ -24,12 +27,17 @@ export async function getTrailBySlug(slug: string): Promise<TrailWithRegion | un
     FROM trails
            INNER JOIN regions ON trails.region_id = regions.id
     WHERE trails.slug = ?
-  `, slug);
+  `,
+    slug,
+  );
 }
 
-export async function getTrailsByRegionId(regionId: number): Promise<TrailWithRegion[]> {
+export async function getTrailsByRegionId(
+  regionId: number,
+): Promise<TrailWithRegion[]> {
   const db: Database = getDB();
-  return db.all<TrailWithRegion[]>(`
+  return db.all<TrailWithRegion[]>(
+    `
     SELECT
       trails.*,
       regions.name AS region_name,
@@ -37,7 +45,9 @@ export async function getTrailsByRegionId(regionId: number): Promise<TrailWithRe
     FROM trails
     INNER JOIN regions
     ON trails.region_id = regions.id
-    WHERE trails.region_id = ?`, regionId);
+    WHERE trails.region_id = ?`,
+    regionId,
+  );
 }
 
 // Admin handlers
