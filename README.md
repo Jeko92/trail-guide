@@ -25,7 +25,7 @@ The application provides three interfaces backed by the same database and model 
 - Nunjucks
 - SQLite
 - Pico.css
-- Bun
+- Bun (current dev runtime — see [Development](#development) for the tsx alternative)
 - ESLint
 - Prettier
 
@@ -145,6 +145,10 @@ API_KEY=your-secret-key
 
 ## Development
 
+This project currently runs on **Bun** during development — `npm run dev`
+shells out to `bun --watch src/app.ts`, which loads `.env` and restarts the
+server on file changes.
+
 Start the development server:
 
 ```bash
@@ -156,6 +160,20 @@ The application will be available at:
 ```
 http://localhost:3000
 ```
+
+### Using tsx instead of Bun
+
+Bun isn't a hard requirement — the codebase is plain TypeScript, so anyone
+who prefers a Node-based workflow can run it with [`tsx`](https://tsx.is)
+instead:
+
+```bash
+npx tsx watch --env-file=.env src/app.ts
+```
+
+`tsx watch` gives the same auto-restart-on-change behavior as `bun --watch`,
+and `--env-file` loads `.env` the same way Bun does automatically. `tsx` is
+already listed as a dev dependency, so no extra install is needed.
 
 ## Learning Context
 
