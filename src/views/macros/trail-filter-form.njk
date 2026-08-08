@@ -14,7 +14,7 @@
         <div>
           <label for="region">Region</label>
           <select id="region" name="region">
-            <option value="">--Please choose an option--</option>
+            <option value="">All regions</option>
             {% for region in regions %}
               <option value="{{ region.slug }}" {{ 'selected' if filters.region == region.slug }}>{{region.name | default('') }}</option>
             {% endfor %}
@@ -22,10 +22,10 @@
         </div>
 
         <!-- Search trails by difficulty-->
-        <div style='flex:1; min-width:0;'>
+        <div class='field-col'>
           <label for="difficulty">Difficulty</label>
           <select id="difficulty" name='difficulty'>
-            <option value="">--Please choose an option--</option>
+            <option value="">All difficulties</option>
             <option value="easy" {{ 'selected' if filters.difficulty == 'easy' }}>Easy</option>
             <option value="moderate" {{ 'selected' if filters.difficulty == 'moderate' }}>Moderate</option>
             <option value="hard" {{ 'selected' if filters.difficulty == 'hard' }}>Hard</option>
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Search trail by distance -->
-        <div style='flex:1; min-width:0;'>
+        <div class='field-col'>
           <label for="maxDistance">Max distance (km)</label>
           <input type="number" id="maxDistance" name="maxDistance" placeholder="e.g. 10"
                  value="{{ filters.maxDistance | default('') }}" min='0'

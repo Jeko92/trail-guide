@@ -3,6 +3,13 @@
 {% block main_content %}
   <article>
     <header>
+      {% if trail.image_url %}
+        <img
+          src="{{ trail.image_url }}"
+          alt="{{ trail.title }}"
+          class='trail-hero-img'
+        >
+      {% endif %}
       <h1>{{ trail.title }}</h1>
       <p>
         <strong>{{ trail.region_name }}</strong>
@@ -18,12 +25,6 @@
         <strong>{{ trail.distance_km }} km</strong>
       </p>
     </header>
-    {% if trail.image_url %}
-      <img
-        src="{{ trail.image_url }}"
-        alt="{{ trail.title }}"
-      >
-    {% endif %}
     {{ trail.description | safe }}
     {% if tags.length %}
       <p>

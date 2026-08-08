@@ -10,12 +10,12 @@
              value="{{ trail.title | default('') }}" required>
     </div>
 
-    <div style='display:flex; gap:1.5rem; align-items:flex-start;'>
+    <div class='field-row'>
       <!-- Trail region -->
-      <div style='flex:1; min-width:0;'>
+      <div class='field-col'>
         <label for="region_id">Region</label>
         <select id="region_id" name="region_id">
-          <option value="">--Please choose an option--</option>
+          <option value="">Choose a region</option>
           {% for region in regions %}
           <option value="{{ region.id }}" {{ 'selected' if trail and region.id == trail.region_id }}>{{region.name }}</option>
           {% endfor %}
@@ -32,10 +32,10 @@
         </details>
       </div>
       <!-- Trail difficulty -->
-      <div style='flex:1; min-width:0;'>
+      <div class='field-col'>
         <label for="difficulty">Difficulty</label>
         <select id="difficulty" name='difficulty' required>
-          <option value="">--Please choose an option--</option>
+          <option value="">Choose difficulty</option>
           <option value="easy" {{ 'selected' if trail and trail.difficulty == 'easy' }}>Easy</option>
           <option value="moderate" {{ 'selected' if trail and trail.difficulty == 'moderate' }}>Moderate</option>
           <option value="hard" {{ 'selected' if trail and trail.difficulty == 'hard' }}>Hard</option>
@@ -43,7 +43,7 @@
       </div>
 
       <!-- Trail distance -->
-      <div style='flex:1; min-width:0;'>
+      <div class='field-col'>
         <label for="distance">Distance</label>
         <input type="number" id="distance" name="distance" placeholder="e.g. 4.2"
                value="{{ trail.distance_km | default('') }}" required min='0'
