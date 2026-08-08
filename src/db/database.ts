@@ -16,12 +16,12 @@ export async function connectDB() {
   db = await open({ filename: dbPath, driver: sqlite3.Database });
   await db.run('PRAGMA foreign_keys = ON;');
 
-  const testRegion: unknown = await db.all('SELECT * FROM regions LIMIT 1');
-  const testTrail: unknown = await db.all('SELECT * FROM trails LIMIT 1');
+  // const testRegion: unknown = await db.all('SELECT * FROM regions LIMIT 1');
+  // const testTrail: unknown = await db.all('SELECT * FROM trails LIMIT 1');
 
   console.log(`$Database connected and tables initialized.`);
-  console.log(JSON.stringify(testRegion, null, 2));
-  console.log(JSON.stringify(testTrail, null, 2));
+  // console.log(JSON.stringify(testRegion, null, 2));
+  // console.log(JSON.stringify(testTrail, null, 2));
 
   return db;
 }

@@ -8,7 +8,7 @@ const LOG_FILE = LOG_DIR && process.env['LOG_FILE_NAME']
   ? join(LOG_DIR, process.env['LOG_FILE_NAME'])
   : undefined;
 
-console.log({ LOG_DIR, LOG_FILE });
+// console.log({ LOG_DIR, LOG_FILE });
 
 const addLogMessages = async ( message: string ) => {
   try {
