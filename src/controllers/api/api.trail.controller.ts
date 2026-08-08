@@ -36,3 +36,42 @@ export const getTrailBySlugController = async (
     next(err);
   }
 };
+
+export const createTrailApiController = async (
+  _req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    console.log('Create new trail API Controller');
+    res.status(201).json({message: "New trail successfully created"})
+  } catch ( err ) {
+    next(err);
+  }
+}
+
+export const patchTrailApiController = async (
+  _req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    console.log('Patch trail by ID API Controller');
+    res.status(200).json({message: "Trail successfully updated"})
+  } catch ( err ) {
+    next(err);
+  }
+}
+
+export const deleteTrailApiController = async (
+  _req:Request,
+  res:Response,
+  next:NextFunction
+)=>{
+  try {
+    console.log('Delete trail by ID API Controller');
+    res.status(204).json({message: "Trail successfully deleted"})
+  } catch ( err ) {
+    next(err);
+  }
+}
