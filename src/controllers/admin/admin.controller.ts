@@ -74,18 +74,27 @@ export async function prepareTrailData (
   return { data: { ...validated.data, regionId } };
 }
 
-export const adminController = async ( _req: Request, res: Response ) => {
-  const trails = await getAllTrails();
+export const adminController = async ( req: Request, res: Response ) => {
+  const { q, region, difficulty, maxDistance } = req.query;
+  const trails = await getAllTrails({
+    q: q as string,
+    regionSlug: region as string,
+    difficulty: difficulty as string,
+    maxDistance: maxDistance as string,
+  });
   const sanitizedTrails = trails.map(( trail ) => ({
       ...trail,
       description: sanitizePostContent(trail.description),
       createdAt: formatDate(trail.created_at)
     })
   );
+  const regions = await getAllRegions();
 
   res.render('admin/list.njk', {
     title: 'Trail Guide - Admin Dashboard',
-    trails: sanitizedTrails
+    trails: sanitizedTrails,
+    regions,
+    filters: { q, region, difficulty, maxDistance },
   });
 };
 

@@ -1,8 +1,11 @@
 {% extends "layouts/_admin-base.njk" %}
+{% from "macros/trail-filter-form.njk" import trailFilterForm %}
 
 {% block main_content %}
 
-  {% if trails %}
+  {{ trailFilterForm('/admin', regions, filters) }}
+
+  {% if trails.length %}
 
     <table class="striped">
       <thead>
