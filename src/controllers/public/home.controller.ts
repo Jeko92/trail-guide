@@ -8,7 +8,7 @@ const homeController = async (
   next: NextFunction,
 ) => {
   try {
-    const trails: TrailWithRegion[] = await getAllTrails();
+    const trails: TrailWithRegion[] = await getAllTrails({ page: 1, pageSize: 3 });
     // console.log(JSON.stringify(trails));
     res.render('public/home.njk', {
       title: 'Trail Guide',
