@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { addTrail, countTrails, deleteTrail, getAllTrails, getTrailById, getTrailBySlug, updateTrail } from '../../models/trails.model.ts';
-import { getTagsForTrail } from '../../models/tags.model.ts';
+import { attachTagsToTrails, getTagsForTrail } from '../../models/tags.model.ts';
 import { prepareTrailData } from '../admin/admin.controller.ts';
 
 export const getTrailsController = async (
@@ -18,10 +18,11 @@ export const getTrailsController = async (
       q: req.query['q'] as string
     };
 
-    const [ items, total ] = await Promise.all([
+    const [ trails, total ] = await Promise.all([
       getAllTrails({ ...filters, page, pageSize }),
       countTrails(filters),
     ]);
+    const items = await attachTagsToTrails(trails);
 
     res.json({ items, total, page, pageSize });
   } catch ( err ) {
