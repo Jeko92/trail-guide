@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { getAllTrails } from '../../models/trails.model.ts';
+import { attachTagsToTrails } from '../../models/tags.model.ts';
 import type { TrailWithRegion } from '../../types/types.ts';
 
 const homeController = async (
@@ -9,10 +10,10 @@ const homeController = async (
 ) => {
   try {
     const trails: TrailWithRegion[] = await getAllTrails({ page: 1, pageSize: 3 });
-    // console.log(JSON.stringify(trails));
+    const trailsWithTags = await attachTagsToTrails(trails);
     res.render('public/home.njk', {
       title: 'Trail Guide',
-      trails: trails,
+      trails: trailsWithTags,
     });
   } catch (err) {
     next(err);

@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { countTrails, getAllTrails } from '../../models/trails.model.ts';
+import { attachTagsToTrails } from '../../models/tags.model.ts';
 import { getAllRegions } from '../../models/regions.model.ts';
 
 const trailsController = async (
@@ -22,10 +23,11 @@ const trailsController = async (
       getAllTrails({ ...filters, page, pageSize }),
       countTrails(filters),
     ]);
+    const trailsWithTags = await attachTagsToTrails(trails);
     const regions = await getAllRegions();
     res.render('public/trails.njk', {
       title: `Trail Guide - All Trails`,
-      trails,
+      trails: trailsWithTags,
       regions,
       filters: { q, region, difficulty, maxDistance },
       pagination: { page, pageSize, total },

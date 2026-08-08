@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { getAllRegions, getRegionBySlug } from '../../models/regions.model.ts';
 import { getTrailsByRegionId } from '../../models/trails.model.ts';
+import { attachTagsToTrails } from '../../models/tags.model.ts';
 
 const regionController = async (
   req: Request<{ slug: string }>,
@@ -16,7 +17,8 @@ const regionController = async (
       return;
     }
 
-    const trails = await getTrailsByRegionId(region.id);
+    const regionTrails = await getTrailsByRegionId(region.id);
+    const trails = await attachTagsToTrails(regionTrails);
 
     const allRegions = await getAllRegions();
     const currentIndex = allRegions.findIndex((r) => r.slug === slug);
