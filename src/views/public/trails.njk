@@ -27,4 +27,25 @@
 
     {% endif %}
   </section>
+
+  <nav aria-label="Trails pagination">
+    <ul class='region-navigation'>
+      <li>
+        {% if pagination.page > 1 %}
+          <a role="button"
+             href="/trails?q={{ filters.q | default('') }}&region={{ filters.region | default('') }}&difficulty={{ filters.difficulty | default('') }}&maxDistance={{ filters.maxDistance | default('') }}&page={{ pagination.page - 1 }}&pageSize={{ pagination.pageSize }}">
+            ← Prev
+          </a>
+        {% endif %}
+      </li>
+      <li>
+        {% if pagination.page * pagination.pageSize < pagination.total %}
+          <a role="button"
+             href="/trails?q={{ filters.q | default('') }}&region={{ filters.region | default('') }}&difficulty={{ filters.difficulty | default('') }}&maxDistance={{ filters.maxDistance | default('') }}&page={{ pagination.page + 1 }}&pageSize={{ pagination.pageSize }}">
+            Next →
+          </a>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
 {% endblock %}

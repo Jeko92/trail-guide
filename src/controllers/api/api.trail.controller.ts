@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { addTrail, deleteTrail, getAllTrails, getTrailById, getTrailBySlug, updateTrail } from '../../models/trails.model.ts';
-import type { TrailWithRegion } from '../../types/types.ts';
+import { addTrail, countTrails, deleteTrail, getAllTrails, getTrailById, getTrailBySlug, updateTrail } from '../../models/trails.model.ts';
 import { prepareTrailData } from '../admin/admin.controller.ts';
 
 export const getTrailsController = async (
@@ -9,13 +8,21 @@ export const getTrailsController = async (
   next: NextFunction,
 ) => {
   try {
-    const trails:TrailWithRegion[] = await getAllTrails({
+    const page = Number(req.query['page']) || 1;
+    const pageSize = Number(req.query['pageSize']) || 10;
+    const filters = {
       regionSlug: req.query['region'] as string,
       difficulty: req.query['difficulty'] as string,
       maxDistance: req.query['maxDistance'] as string,
       q: req.query['q'] as string
-    });
-    res.json(trails);
+    };
+
+    const [ items, total ] = await Promise.all([
+      getAllTrails({ ...filters, page, pageSize }),
+      countTrails(filters),
+    ]);
+
+    res.json({ items, total, page, pageSize });
   } catch ( err ) {
     next(err);
   }

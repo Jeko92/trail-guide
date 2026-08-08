@@ -3,8 +3,15 @@ import { getDB } from '../db/database.ts';
 import type { Database } from 'sqlite';
 import { sanitizePostContent, slugify } from '../utils/utils.ts';
 
-export async function getAllTrails (filters?: { regionSlug?: string; difficulty?: string , maxDistance?:string, q?:string }): Promise<TrailWithRegion[]> {
-  const db: Database = getDB();
+export interface TrailFilters {
+  regionSlug?: string;
+  difficulty?: string;
+  maxDistance?: string;
+  q?: string;
+}
+
+// Shared by getAllTrails and countTrails: both need the exact same WHERE clause. (one with ORDER BY one without)
+function buildTrailFilterClause ( filters?: TrailFilters ): { whereClause: string; values: (string | number)[] } {
   const conditions: string[] = [];
   const values: (string | number)[] = [];
 
@@ -29,6 +36,24 @@ export async function getAllTrails (filters?: { regionSlug?: string; difficulty?
   }
 
   const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+  return { whereClause, values };
+}
+
+export async function getAllTrails (
+  filters?: TrailFilters & { page?: number; pageSize?: number },
+): Promise<TrailWithRegion[]> {
+  const db: Database = getDB();
+  const { whereClause, values } = buildTrailFilterClause(filters);
+
+  // Pagination is opt-in: only applied LIMIT/OFFSET when the caller actually asks for a page.
+  let limitClause = '';
+  const limitValues: number[] = [];
+  if ( filters?.page || filters?.pageSize ) {
+    const pageSize = filters.pageSize ?? 10;
+    const page = filters.page ?? 1;
+    limitClause = 'LIMIT ? OFFSET ?';
+    limitValues.push(pageSize, (page - 1) * pageSize);
+  }
 
   return db.all<TrailWithRegion[]>(
     `
@@ -39,10 +64,28 @@ export async function getAllTrails (filters?: { regionSlug?: string; difficulty?
     FROM trails
            INNER JOIN regions ON trails.region_id = regions.id
     ${whereClause}
-    ORDER BY trails.created_at DESC;
+    ORDER BY trails.created_at DESC
+    ${limitClause};
+  `,
+    ...values, ...limitValues,
+  );
+}
+
+export async function countTrails ( filters?: TrailFilters ): Promise<number> {
+  const db: Database = getDB();
+  const { whereClause, values } = buildTrailFilterClause(filters);
+
+  const result = await db.get<{ count: number }>(
+    `
+    SELECT COUNT(*) AS count
+    FROM trails
+           INNER JOIN regions ON trails.region_id = regions.id
+    ${whereClause};
   `,
     ...values,
   );
+
+  return result?.count ?? 0;
 }
 
 export async function getTrailBySlug (
