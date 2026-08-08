@@ -144,3 +144,12 @@ main .grid > article > footer {
 .text-center {
   text-align: center;
 }
+
+.ql-toolbar [role='button'] {
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 3px 5px;
+  color: inherit;
+  font-weight: normal;
+}

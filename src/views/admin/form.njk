@@ -53,9 +53,9 @@
 
     <!-- Trail description -->
     <div>
-      <label for="description">Description</label>
-      <textarea id="description" name="description" rows="5" cols="33"
-                placeholder="Describe the trail..." required>{{ trail.description | default('') }}</textarea>
+      <label for="description-editor">Description</label>
+      <div id="description-editor">{{ trail.description | default('') | safe }}</div>
+      <input type="hidden" id="description" name="description">
     </div>
 
     <!-- Trail image -->
@@ -81,4 +81,31 @@
     <input type="submit" value="{{ 'Update Trail' if trail else 'Create Trail' }}">
     <a href="/admin" role="button" class="secondary">Cancel</a>
   </form>
+{% endblock %}
+
+{% block scripts %}
+  <link href="/vendor/quill/quill.snow.css" rel="stylesheet">
+  <script src="/vendor/quill/quill.js"></script>
+  <script>
+    const quill = new Quill('#description-editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [ { header: [ 1, 2, 3, false ] } ],
+          [ 'bold', 'italic' ],
+          [ 'link' ],
+          [ { list: 'ordered' }, { list: 'bullet' } ]
+        ]
+      }
+    });
+
+    document.querySelector('form').addEventListener('submit', ( e ) => {
+      if ( quill.getText().trim() === '' ) {
+        e.preventDefault();
+        alert('Description is required');
+        return;
+      }
+      document.getElementById('description').value = quill.root.innerHTML;
+    });
+  </script>
 {% endblock %}
