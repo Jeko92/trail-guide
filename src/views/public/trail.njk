@@ -25,6 +25,13 @@
       >
     {% endif %}
     {{ trail.description | safe }}
+    {% if tags.length %}
+      <p>
+        {% for tag in tags %}
+          <mark>{{ tag.name }}</mark>
+        {% endfor %}
+      </p>
+    {% endif %}
     <footer>
       <p>
         Published:

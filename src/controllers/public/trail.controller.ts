@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { getAllTrails, getTrailBySlug } from '../../models/trails.model.ts';
+import { getTagsForTrail } from '../../models/tags.model.ts';
 import type { TrailViewModel } from '../../types/types.ts';
 import { formatDate } from '../../utils/utils.ts';
 
@@ -30,11 +31,14 @@ const trailController = async (
         ? allTrails[currentIndex + 1]
         : null;
 
+    const tags = await getTagsForTrail(trail.id);
+
     res.render('public/trail.njk', {
       title: `Trail Guide - ${trail.title}`,
       trail: trailWithTimestamp,
       prevTrail,
       nextTrail,
+      tags,
     });
   } catch (err) {
     next(err);
