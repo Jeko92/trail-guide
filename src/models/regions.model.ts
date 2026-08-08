@@ -3,9 +3,18 @@ import { getDB } from '../db/database.ts';
 import type { Database } from 'sqlite';
 import { sanitizePostContent, slugify } from '../utils/utils.ts';
 
+// image_url is borrowed from the region's own first trail so cards have a
+// picture without needing a separate image field on the region itself.
 export async function getAllRegions (): Promise<Region[]> {
   const db: Database = getDB();
-  return db.all<Region[]>('SELECT * FROM regions ORDER BY name');
+  return db.all<Region[]>(
+    `SELECT regions.*,
+            (SELECT image_url FROM trails
+             WHERE trails.region_id = regions.id
+             ORDER BY id LIMIT 1) AS image_url
+     FROM regions
+     ORDER BY name`
+  );
 }
 
 export async function getRegionBySlug (

@@ -4,6 +4,7 @@ export interface Region {
   slug: string;
   country: string;
   description: string;
+  image_url?: string | null;
 }
 
 export type Difficulty = 'easy' | 'moderate' | 'hard';

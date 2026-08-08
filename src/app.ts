@@ -26,6 +26,7 @@ const picoDir = path.join(
   'pico',
   'css',
 );
+const quillDir = path.join(projectRoot, 'node_modules', 'quill', 'dist');
 
 // --- App Configuration ---
 app.set('views', viewsDir);
@@ -43,6 +44,7 @@ env.addGlobal('currentYear', () => new Date().getFullYear());
 app.use('/assets', express.static(assetsDir));
 app.use('/css', express.static(picoDir));
 app.use('/css', express.static(cssDir));
+app.use('/vendor/quill', express.static(quillDir));
 app.use(express.static(path.join(projectRoot, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
