@@ -9,7 +9,19 @@ import {
 } from '../../models/trails.model.ts';
 import { formatDate, sanitizePostContent } from '../../utils/utils.ts';
 import { addRegion, deleteRegion, getAllRegions } from '../../models/regions.model.ts';
+import { getAllTags, getTagsForTrail, setTagsForTrail } from '../../models/tags.model.ts';
 import type { Difficulty } from '../../types/types.ts';
+
+// Checkbox inputs sharing one name come through as a single string when
+// only one is checked, an array when several are, or missing entirely when
+// none are — normalize all three into a plain number array.
+function parseTagIds ( raw: unknown ): number[] {
+  if ( !raw ) {
+    return [];
+  }
+  const values = Array.isArray(raw) ? raw : [ raw ];
+  return values.map(Number).filter(( n ) => !Number.isNaN(n));
+}
 
 // Shared by createTrail/updateTrailController (admin) and the API trail
 // controller: resolves req.body down to a single region id, either the one
@@ -100,7 +112,8 @@ export const adminController = async ( req: Request, res: Response ) => {
 
 export const getNewTrailForm = async ( _req: Request, res: Response ) => {
   const regions = await getAllRegions();
-  res.render('admin/form.njk', { title: 'Trail Guide - Create new trail', regions });
+  const tags = await getAllTags();
+  res.render('admin/form.njk', { title: 'Trail Guide - Create new trail', regions, tags });
 };
 
 export const getEditTrailForm = async ( req: Request<{ id: string }>, res: Response ) => {
@@ -112,7 +125,17 @@ export const getEditTrailForm = async ( req: Request<{ id: string }>, res: Respo
   }
 
   const regions = await getAllRegions();
-  res.render('admin/form.njk', { title: 'Trail Guide - Edit trail', trail, regions });
+  const tags = await getAllTags();
+  const trailTags = await getTagsForTrail(trail.id);
+  const selectedTagIds = trailTags.map(( tag ) => tag.id);
+
+  res.render('admin/form.njk', {
+    title: 'Trail Guide - Edit trail',
+    trail,
+    regions,
+    tags,
+    selectedTagIds,
+  });
 };
 
 export const createTrailController = async ( req: Request, res: Response ) => {
@@ -124,7 +147,8 @@ export const createTrailController = async ( req: Request, res: Response ) => {
   const { title, difficulty, distanceKm, description, image_url, regionId } = prepared.data;
 
   try {
-    await addTrail(regionId, title, difficulty, distanceKm, description, image_url);
+    const newTrailId = await addTrail(regionId, title, difficulty, distanceKm, description, image_url);
+    await setTagsForTrail(newTrailId, parseTagIds(req.body.tags));
     res.status(201).redirect('/admin');
   } catch ( err ) {
     res.status(400).render('admin/form.njk', {
@@ -164,6 +188,7 @@ export async function updateTrailController ( req: Request<{ id: string }>, res:
       description: sanitizePostContent(description),
       image_url,
     });
+    await setTagsForTrail(Number(id), parseTagIds(req.body.tags));
     res.redirect('/admin');
   } catch ( err ) {
     res.status(400).render('admin/form.njk', {

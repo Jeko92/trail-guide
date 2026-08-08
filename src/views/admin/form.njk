@@ -66,6 +66,18 @@
              value="{{ trail.image_url | default('') }}" required>
     </div>
 
+    <!-- Trail tags -->
+    <fieldset>
+      <legend>Tags</legend>
+      {% for tag in tags %}
+        <label for="tag-{{ tag.id }}">
+          <input type="checkbox" id="tag-{{ tag.id }}" name="tags" value="{{ tag.id }}"
+                 {{ 'checked' if tag.id in selectedTagIds }}>
+          {{ tag.name }}
+        </label>
+      {% endfor %}
+    </fieldset>
+
     <input type="submit" value="{{ 'Update Trail' if trail else 'Create Trail' }}">
     <a href="/admin" role="button" class="secondary">Cancel</a>
   </form>
