@@ -10,12 +10,12 @@
              value="{{ trail.title | default('') }}" required>
     </div>
 
-    <div style='display:flex; gap:1.5rem; align-items:flex-start;'>
+    <div class='field-row'>
       <!-- Trail region -->
-      <div style='flex:1; min-width:0;'>
+      <div class='field-col'>
         <label for="region_id">Region</label>
         <select id="region_id" name="region_id">
-          <option value="">--Please choose an option--</option>
+          <option value="">Choose a region</option>
           {% for region in regions %}
           <option value="{{ region.id }}" {{ 'selected' if trail and region.id == trail.region_id }}>{{region.name }}</option>
           {% endfor %}
@@ -32,10 +32,10 @@
         </details>
       </div>
       <!-- Trail difficulty -->
-      <div style='flex:1; min-width:0;'>
+      <div class='field-col'>
         <label for="difficulty">Difficulty</label>
         <select id="difficulty" name='difficulty' required>
-          <option value="">--Please choose an option--</option>
+          <option value="">Choose difficulty</option>
           <option value="easy" {{ 'selected' if trail and trail.difficulty == 'easy' }}>Easy</option>
           <option value="moderate" {{ 'selected' if trail and trail.difficulty == 'moderate' }}>Moderate</option>
           <option value="hard" {{ 'selected' if trail and trail.difficulty == 'hard' }}>Hard</option>
@@ -43,7 +43,7 @@
       </div>
 
       <!-- Trail distance -->
-      <div style='flex:1; min-width:0;'>
+      <div class='field-col'>
         <label for="distance">Distance</label>
         <input type="number" id="distance" name="distance" placeholder="e.g. 4.2"
                value="{{ trail.distance_km | default('') }}" required min='0'
@@ -53,9 +53,9 @@
 
     <!-- Trail description -->
     <div>
-      <label for="description">Description</label>
-      <textarea id="description" name="description" rows="5" cols="33"
-                placeholder="Describe the trail..." required>{{ trail.description | default('') }}</textarea>
+      <label for="description-editor">Description</label>
+      <div id="description-editor">{{ trail.description | default('') | safe }}</div>
+      <input type="hidden" id="description" name="description">
     </div>
 
     <!-- Trail image -->
@@ -81,4 +81,31 @@
     <input type="submit" value="{{ 'Update Trail' if trail else 'Create Trail' }}">
     <a href="/admin" role="button" class="secondary">Cancel</a>
   </form>
+{% endblock %}
+
+{% block scripts %}
+  <link href="/vendor/quill/quill.snow.css" rel="stylesheet">
+  <script src="/vendor/quill/quill.js"></script>
+  <script>
+    const quill = new Quill('#description-editor', {
+      theme: 'snow',
+      modules: {
+        toolbar: [
+          [ { header: [ 1, 2, 3, false ] } ],
+          [ 'bold', 'italic' ],
+          [ 'link' ],
+          [ { list: 'ordered' }, { list: 'bullet' } ]
+        ]
+      }
+    });
+
+    document.querySelector('form').addEventListener('submit', ( e ) => {
+      if ( quill.getText().trim() === '' ) {
+        e.preventDefault();
+        alert('Description is required');
+        return;
+      }
+      document.getElementById('description').value = quill.root.innerHTML;
+    });
+  </script>
 {% endblock %}

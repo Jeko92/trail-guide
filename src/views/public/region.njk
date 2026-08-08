@@ -8,8 +8,8 @@
     <p>{{ region.description }}</p>
   </header>
 
-  <section>
-    <h2>Trails</h2>
+  <h2>Trails</h2>
+  <section class='grid'>
     {% if trails.length %}
       {% for trail in trails %}
         {{ trailCard(trail) }}

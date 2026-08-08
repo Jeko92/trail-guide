@@ -113,7 +113,12 @@ export const adminController = async ( req: Request, res: Response ) => {
 export const getNewTrailForm = async ( _req: Request, res: Response ) => {
   const regions = await getAllRegions();
   const tags = await getAllTags();
-  res.render('admin/form.njk', { title: 'Trail Guide - Create new trail', regions, tags });
+  res.render('admin/form.njk', {
+    title: 'Trail Guide - Create new trail',
+    regions,
+    tags,
+    selectedTagIds: [],
+  });
 };
 
 export const getEditTrailForm = async ( req: Request<{ id: string }>, res: Response ) => {
