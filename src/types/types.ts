@@ -29,3 +29,9 @@ export interface TrailWithRegion extends Trail {
 export interface TrailViewModel extends TrailWithRegion {
   createdAt: string;
 }
+
+export interface Tag {
+  id: number;
+  name: string;
+  slug: string;
+}

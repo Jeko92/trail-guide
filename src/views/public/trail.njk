@@ -1,7 +1,6 @@
 {% extends "layouts/_base.njk" %}
 
 {% block main_content %}
-  <h1>Trail test</h1>
   <article>
     <header>
       <h1>{{ trail.title }}</h1>
@@ -26,6 +25,13 @@
       >
     {% endif %}
     {{ trail.description | safe }}
+    {% if tags.length %}
+      <p>
+        {% for tag in tags %}
+          <mark>{{ tag.name }}</mark>
+        {% endfor %}
+      </p>
+    {% endif %}
     <footer>
       <p>
         Published:
@@ -33,5 +39,20 @@
       </p>
     </footer>
   </article>
+
+  <nav aria-label="Trail navigation">
+    <ul class='region-navigation'>
+      <li>
+        {% if prevTrail %}
+          <a role="button" href="/trails/{{ prevTrail.slug }}">← {{ prevTrail.title }}</a>
+        {% endif %}
+      </li>
+      <li>
+        {% if nextTrail %}
+          <a role="button" href="/trails/{{ nextTrail.slug }}">{{ nextTrail.title }} →</a>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
 
 {% endblock %}
