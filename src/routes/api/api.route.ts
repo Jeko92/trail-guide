@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { getTrailsController, getTrailBySlugController } from '../../controllers/api/api.trail.controller.ts';
+import {
+  getTrailsController,
+  getTrailBySlugController,
+} from '../../controllers/api/api.trail.controller.ts';
 import { getRegionsController, getTrailsByRegionIdController } from '../../controllers/api/api.region.controller.ts';
 
 const apiRoute = Router();

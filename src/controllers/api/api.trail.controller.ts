@@ -1,13 +1,14 @@
 import type { NextFunction, Request, Response } from 'express';
 import { getAllTrails, getTrailBySlug } from '../../models/trails.model.ts';
+import type { TrailWithRegion } from '../../types/types.ts';
 
 export const getTrailsController = async (
-  _req: Request,
+  req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const trails = await getAllTrails();
+    const trails = filterTrails(await getAllTrails(), req.query);
     res.json(trails);
   } catch ( err ) {
     next(err);
@@ -32,3 +33,12 @@ export const getTrailBySlugController = async (
     next(err);
   }
 };
+
+export const filterTrails = (trails: TrailWithRegion[], query: { region?: string; difficulty?: string }): TrailWithRegion[] => {
+  const regionSlug = query.region;
+  const difficulty = query.difficulty;
+  return trails.filter(trail =>
+    (!regionSlug || trail.region_slug === regionSlug) &&
+    (!difficulty || trail.difficulty === difficulty)
+  );
+}

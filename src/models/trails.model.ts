@@ -7,6 +7,7 @@ export async function getAllTrails (): Promise<TrailWithRegion[]> {
   const db: Database = getDB();
   return db.all<TrailWithRegion[]>(`
     SELECT trails.*,
+           regions.slug    AS region_slug,
            regions.name    AS region_name,
            regions.country AS region_country
     FROM trails
@@ -22,6 +23,7 @@ export async function getTrailBySlug (
   return db.get<TrailWithRegion>(
     `
       SELECT trails.*,
+             regions.slug    AS region_slug,
              regions.name    AS region_name,
              regions.country AS region_country
       FROM trails
@@ -39,6 +41,7 @@ export async function getTrailsByRegionId (
   return db.all<TrailWithRegion[]>(
     `
       SELECT trails.*,
+             regions.slug    AS region_slug,
              regions.name    AS region_name,
              regions.country AS region_country
       FROM trails
