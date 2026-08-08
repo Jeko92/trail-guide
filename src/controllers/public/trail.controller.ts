@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { getTrailBySlug } from '../../models/trails.model.ts';
+import { getAllTrails, getTrailBySlug } from '../../models/trails.model.ts';
 import type { TrailViewModel } from '../../types/types.ts';
 import { formatDate } from '../../utils/utils.ts';
 
@@ -9,7 +9,8 @@ const trailController = async (
   next: NextFunction,
 ) => {
   try {
-    const trail= await getTrailBySlug(req.params.slug);
+    const { slug } = req.params;
+    const trail = await getTrailBySlug(slug);
 
     if (!trail) {
       res.status(404).render('public/404.njk', { title: 'Trail not found' });
@@ -21,9 +22,19 @@ const trailController = async (
       createdAt: formatDate(trail.created_at),
     };
 
+    const allTrails = await getAllTrails();
+    const currentIndex = allTrails.findIndex((t) => t.slug === slug);
+    const prevTrail = currentIndex > 0 ? allTrails[currentIndex - 1] : null;
+    const nextTrail =
+      currentIndex < allTrails.length - 1
+        ? allTrails[currentIndex + 1]
+        : null;
+
     res.render('public/trail.njk', {
       title: `Trail Guide - ${trail.title}`,
-      trail: trailWithTimestamp
+      trail: trailWithTimestamp,
+      prevTrail,
+      nextTrail,
     });
   } catch (err) {
     next(err);
