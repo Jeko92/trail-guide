@@ -21,6 +21,13 @@
     <p>
       {{ trail.distance_km }} km
     </p>
+    {% if trail.tags.length %}
+      <p>
+        {% for tag in trail.tags %}
+          <mark>{{ tag.name }}</mark>
+        {% endfor %}
+      </p>
+    {% endif %}
     <footer>
       <a href="/trails/{{ trail.slug }}">
         Read more →
