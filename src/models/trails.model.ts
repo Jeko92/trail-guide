@@ -3,10 +3,10 @@ import { getDB } from '../db/database.ts';
 import type { Database } from 'sqlite';
 import { sanitizePostContent, slugify } from '../utils/utils.ts';
 
-export async function getAllTrails (filters?: { regionSlug?: string; difficulty?: string }): Promise<TrailWithRegion[]> {
+export async function getAllTrails (filters?: { regionSlug?: string; difficulty?: string , maxDistance?:string, q?:string }): Promise<TrailWithRegion[]> {
   const db: Database = getDB();
   const conditions: string[] = [];
-  const values: string[] = [];
+  const values: (string | number)[] = [];
 
   if (filters?.regionSlug) {
     conditions.push('regions.slug = ?')
@@ -16,6 +16,16 @@ export async function getAllTrails (filters?: { regionSlug?: string; difficulty?
   if (filters?.difficulty) {
     conditions.push('trails.difficulty = ?')
     values.push(filters.difficulty)
+  }
+
+  if(filters?.maxDistance){
+    conditions.push('trails.distance_km <= ?')
+    values.push(Number(filters.maxDistance))
+  }
+
+  if(filters?.q){
+    conditions.push('trails.title LIKE ?')
+    values.push(`%${filters.q}%`)
   }
 
   const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';

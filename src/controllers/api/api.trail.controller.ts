@@ -11,7 +11,9 @@ export const getTrailsController = async (
   try {
     const trails:TrailWithRegion[] = await getAllTrails({
       regionSlug: req.query['region'] as string,
-      difficulty: req.query['difficulty'] as string
+      difficulty: req.query['difficulty'] as string,
+      maxDistance: req.query['maxDistance'] as string,
+      q: req.query['q'] as string
     });
     res.json(trails);
   } catch ( err ) {
