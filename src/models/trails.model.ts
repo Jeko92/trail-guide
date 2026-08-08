@@ -3,17 +3,36 @@ import { getDB } from '../db/database.ts';
 import type { Database } from 'sqlite';
 import { sanitizePostContent, slugify } from '../utils/utils.ts';
 
-export async function getAllTrails (): Promise<TrailWithRegion[]> {
+export async function getAllTrails (filters?: { regionSlug?: string; difficulty?: string }): Promise<TrailWithRegion[]> {
   const db: Database = getDB();
-  return db.all<TrailWithRegion[]>(`
+  const conditions: string[] = [];
+  const values: string[] = [];
+
+  if (filters?.regionSlug) {
+    conditions.push('regions.slug = ?')
+    values.push(filters.regionSlug)
+  }
+
+  if (filters?.difficulty) {
+    conditions.push('trails.difficulty = ?')
+    values.push(filters.difficulty)
+  }
+
+  const whereClause = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+
+  return db.all<TrailWithRegion[]>(
+    `
     SELECT trails.*,
            regions.slug    AS region_slug,
            regions.name    AS region_name,
            regions.country AS region_country
     FROM trails
            INNER JOIN regions ON trails.region_id = regions.id
+    ${whereClause}
     ORDER BY trails.created_at DESC;
-  `);
+  `,
+    ...values,
+  );
 }
 
 export async function getTrailBySlug (

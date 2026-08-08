@@ -8,7 +8,10 @@ export const getTrailsController = async (
   next: NextFunction,
 ) => {
   try {
-    const trails = filterTrails(await getAllTrails(), req.query);
+    const trails:TrailWithRegion[] = await getAllTrails({
+      regionSlug: req.query['region'] as string,
+      difficulty: req.query['difficulty'] as string
+    });
     res.json(trails);
   } catch ( err ) {
     next(err);
@@ -33,12 +36,3 @@ export const getTrailBySlugController = async (
     next(err);
   }
 };
-
-export const filterTrails = (trails: TrailWithRegion[], query: { region?: string; difficulty?: string }): TrailWithRegion[] => {
-  const regionSlug = query.region;
-  const difficulty = query.difficulty;
-  return trails.filter(trail =>
-    (!regionSlug || trail.region_slug === regionSlug) &&
-    (!difficulty || trail.difficulty === difficulty)
-  );
-}
