@@ -84,7 +84,7 @@ export async function addTrail (
   distance: number,
   description: string,
   image_url: string
-): Promise<void> {
+): Promise<number> {
   const db: Database = getDB();
   const slug = slugify(title);
 
@@ -97,11 +97,13 @@ export async function addTrail (
   const sanitizedDescription = sanitizePostContent(description);
   const createdAt = Math.floor(Date.now() / 1000);
 
-  await db.run(
+  const result = await db.run(
     `INSERT INTO trails (title, slug, region_id, difficulty, distance_km, description, image_url, created_at)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     title, slug, regionId, difficulty, distance, sanitizedDescription, image_url, createdAt
   );
+
+  return result.lastID ?? 0;
 }
 
 export async function updateTrail ( id: string, changes: Partial<Trail> ): Promise<void> {

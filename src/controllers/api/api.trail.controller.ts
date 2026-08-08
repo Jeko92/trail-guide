@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import { getAllTrails, getTrailBySlug } from '../../models/trails.model.ts';
+import { addTrail, deleteTrail, getAllTrails, getTrailById, getTrailBySlug, updateTrail } from '../../models/trails.model.ts';
 import type { TrailWithRegion } from '../../types/types.ts';
+import { prepareTrailData } from '../admin/admin.controller.ts';
 
 export const getTrailsController = async (
   req: Request,
@@ -38,39 +39,78 @@ export const getTrailBySlugController = async (
 };
 
 export const createTrailApiController = async (
-  _req:Request,
+  req:Request,
   res:Response,
   next:NextFunction
 )=>{
   try {
-    console.log('Create new trail API Controller');
-    res.status(201).json({message: "New trail successfully created"})
+    const prepared = await prepareTrailData(req.body);
+    if ( 'error' in prepared ) {
+      res.status(400).json({ error: prepared.error });
+      return;
+    }
+    const { title, difficulty, distanceKm, description, image_url, regionId } = prepared.data;
+
+    const newTrailId = await addTrail(regionId, title, difficulty, distanceKm, description, image_url);
+    const newTrail = await getTrailById(String(newTrailId));
+    res.status(201).json(newTrail);
   } catch ( err ) {
     next(err);
   }
 }
 
 export const patchTrailApiController = async (
-  _req:Request,
+  req:Request<{ id: string }>,
   res:Response,
   next:NextFunction
 )=>{
   try {
-    console.log('Patch trail by ID API Controller');
-    res.status(200).json({message: "Trail successfully updated"})
+    const id = req.params.id;
+    const existingTrail = await getTrailById(id);
+
+    if ( !existingTrail ) {
+      res.status(404).json({ error: 'Trail not found' });
+      return;
+    }
+
+    const prepared = await prepareTrailData(req.body);
+    if ( 'error' in prepared ) {
+      res.status(400).json({ error: prepared.error });
+      return;
+    }
+    const { title, difficulty, distanceKm, description, image_url, regionId } = prepared.data;
+
+    await updateTrail(id, {
+      region_id: regionId,
+      title,
+      difficulty,
+      distance_km: distanceKm,
+      description,
+      image_url,
+    });
+    const updatedTrail = await getTrailById(id);
+    res.status(200).json(updatedTrail);
   } catch ( err ) {
     next(err);
   }
 }
 
 export const deleteTrailApiController = async (
-  _req:Request,
+  req:Request<{ id: string }>,
   res:Response,
   next:NextFunction
 )=>{
   try {
-    console.log('Delete trail by ID API Controller');
-    res.status(204).json({message: "Trail successfully deleted"})
+    const id = req.params.id;
+    const existingTrail = await getTrailById(id);
+
+    if ( !existingTrail ) {
+      res.status(404).json({ error: 'Trail not found' });
+      return;
+    }
+
+    await deleteTrail(id);
+    res.status(204).send();
   } catch ( err ) {
     next(err);
   }

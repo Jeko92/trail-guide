@@ -11,11 +11,12 @@ import { formatDate, sanitizePostContent } from '../../utils/utils.ts';
 import { addRegion, deleteRegion, getAllRegions } from '../../models/regions.model.ts';
 import type { Difficulty } from '../../types/types.ts';
 
-// Shared by createTrail and updateTrailController: resolves req.body down to
-// a single region id, either the one picked from the <select>, or a brand-new
-// region created on the fly if the "add a new region instead" fields
-// were filled in. Returns null if neither path produced a usable id.
-async function resolveRegionId ( body: Request['body'] ): Promise<number | null> {
+// Shared by createTrail/updateTrailController (admin) and the API trail
+// controller: resolves req.body down to a single region id, either the one
+// picked from the <select> (or an equivalent region_id in a JSON body), or a
+// brand-new region created on the fly if new_region_name (etc.) were filled
+// in. Returns null if neither path produced a usable id.
+export async function resolveRegionId ( body: Request['body'] ): Promise<number | null> {
   const { region_id, new_region_name, new_region_country, new_region_description } = body;
 
   if ( new_region_name && new_region_name !== '' ) {
@@ -55,8 +56,9 @@ function validateTrailFields ( body: Request['body'] ): { data: ValidatedTrailFi
   return { data: { title, difficulty, distanceKm, description, image_url } };
 }
 
-// Shared by createTrail and updateTrailController
-async function prepareTrailData (
+// Shared by createTrail/updateTrailController (admin) and the API trail
+// controller
+export async function prepareTrailData (
   body: Request['body'],
 ): Promise<{ data: ValidatedTrailFields & { regionId: number } } | { error: string }> {
   const validated = validateTrailFields(body);
