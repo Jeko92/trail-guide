@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { addTrail, countTrails, deleteTrail, getAllTrails, getTrailById, getTrailBySlug, updateTrail } from '../../models/trails.model.ts';
+import { getTagsForTrail } from '../../models/tags.model.ts';
 import { prepareTrailData } from '../admin/admin.controller.ts';
 
 export const getTrailsController = async (
@@ -41,7 +42,8 @@ export const getTrailBySlugController = async (
       return;
     }
 
-    res.json(trail);
+    const tags = await getTagsForTrail(trail.id);
+    res.json({ ...trail, tags });
   } catch ( err ) {
     next(err);
   }
